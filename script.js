@@ -1,36 +1,15 @@
-const nav = document.querySelector(".main-nav");
-const upper = document.querySelector(".upper");
+const upper = document.querySelector("header .upper");
+const lower = document.querySelector("header .main-nav");
+let last = window.scrollY;
 
-if (nav && upper) {
-  let lastY = window.scrollY;
-  let ticking = false;
-  const THRESHOLD = 5; // px — ignores micro-jitter
+window.addEventListener("scroll", () => {
+  const y = window.scrollY;
+  lower.classList.toggle("hidden", y > last);
+  upper.classList.toggle("hidden", y > last);
+  last = y;
+}, { passive: true });
 
-  const updateNav = () => {
-    const y = window.scrollY;
-    const delta = y - lastY;
-
-    if (Math.abs(delta) > THRESHOLD) {
-      nav.classList.toggle("hidden", delta > 0 && y > 0);
-      // 80px grace zone — nav stays visible near top
-      lastY = y;
-    }
-
-    ticking = false;
-  };
-
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (!ticking) {
-        requestAnimationFrame(updateNav);
-        ticking = true;
-      }
-    },
-    { passive: true },
-  );
-
-  upper.addEventListener("mouseenter", () => {
-    nav.classList.remove("hidden");
-  });
-}
+upper.addEventListener("mouseenter", () => {
+  lower.classList.remove("hidden");
+  upper.classList.remove("hidden");
+});
